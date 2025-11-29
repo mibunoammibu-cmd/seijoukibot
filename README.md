@@ -1,0 +1,2 @@
+# seijoukibot
+seijoukikun
