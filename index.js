@@ -226,3 +226,18 @@ client.on(Events.MessageCreate, async message => {
 
 // 7. 最後にログイン
 client.login(token);
+
+
+// ===============================
+// Render Free 裏技：ダミーHTTPサーバー
+// ===============================
+const http = require("http");
+
+const PORT = process.env.PORT || 3000;
+
+http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("bot is alive");
+}).listen(PORT, () => {
+  console.log(`Render keep-alive server running on port ${PORT}`);
+});
