@@ -11,11 +11,13 @@ const {
   AudioPlayerStatus,
 } = require("@discordjs/voice");
 const { Client, GatewayIntentBits, Events } = require("discord.js");
+const http = require("http");
 
-// 3. .env からトークンなど取得
+// 2. トークン取得
 const token = process.env.DISCORD_TOKEN;
+console.log("DISCORD_TOKEN 存在チェック:", token ? "OK" : "NG");
 
-// 4. Client 作成
+// 3. Client 作成
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -74,10 +76,10 @@ async function playInUserVoiceChannel(message, fileName, replyText) {
   });
 
   const resource = createAudioResource(filePath, {
-    inlineVolume: true
-});
+    inlineVolume: true,
+  });
 
-  // 音量を 30% に設定
+  // 音量を 10% に設定
   resource.volume.setVolume(0.1);
   connection.subscribe(player);
   player.play(resource);
@@ -86,11 +88,6 @@ async function playInUserVoiceChannel(message, fileName, replyText) {
     await message.reply(replyText);
   }
 }
-
-// 5. ログイン完了時
-client.once(Events.ClientReady, readyClient => {
-  console.log(`ログイン完了: ${readyClient.user.tag}`);
-});
 
 // -------------------------
 //  レート制限（1分で10回まで）
@@ -103,7 +100,7 @@ function canRespond() {
   // 1分以内のログだけ残す
   const oneMinuteAgo = now - 60 * 1000;
   while (rateLimitLog.length && rateLimitLog[0] < oneMinuteAgo) {
-    rateLimitLog.shift(); // 古いやつ削除
+    rateLimitLog.shift();
   }
 
   // 10回以内ならOK
@@ -112,24 +109,22 @@ function canRespond() {
     return true;
   }
 
-  // 10回超えてたら拒否
   return false;
 }
+
+// 5. ログイン完了時
+client.once(Events.ClientReady, readyClient => {
+  console.log(`ログイン完了: ${readyClient.user.tag}`);
+});
 
 // 6. メッセージハンドラ
 client.on(Events.MessageCreate, async message => {
   if (message.author.bot) return;
 
-    // レート制限チェック（1分で10回まで）
+  // レート制限チェック（1分で10回まで）
   if (!canRespond()) {
-    // 必要なら無言で無視
     return;
-
-    // もしくは軽い注意メッセージを入れるならこんな感じ（任意）
-    // await message.reply("反応しすぎなので少し休みます");
-    // return;
   }
-
 
   // コマンドリスト（!help）
   if (message.content === "!help") {
@@ -146,38 +141,22 @@ client.on(Events.MessageCreate, async message => {
       "・!おみくじ → 凶か大凶が出る",
       "",
       "短時間に大量のコマンド送信を受けると一時停止します",
-    
     ].join("\n");
 
     await message.reply("```" + helpMessage + "```");
     return;
   }
 
-  if (message.content.includes("つかう")) {
-  // カスタム絵文字IDを直接指定
-  await message.react("1442771448673599628"); // カスタム絵文字ID
-  return;
-}
-
-  if (message.content.includes("使う")) {
-  // カスタム絵文字IDを直接指定
-  await message.react("1442771448673599628"); // カスタム絵文字ID
-  return;
-}
-
-  if (message.content.includes("つかっ")) {
-  // カスタム絵文字IDを直接指定
-  await message.react("1442771448673599628"); // カスタム絵文字ID
-  return;
-}
-
-  if (message.content.includes("使っ")) {
-  // カスタム絵文字IDを直接指定
-  await message.react("1442771448673599628"); // カスタム絵文字ID
-  return;
-}
-
-
+  // スタンプリアクション
+  if (
+    message.content.includes("つかう") ||
+    message.content.includes("使う") ||
+    message.content.includes("つかっ") ||
+    message.content.includes("使っ")
+  ) {
+    await message.react("1442771448673599628");
+    return;
+  }
 
   // 「ちんぽ」が含まれていたら重み付きランダム返信
   if (message.content.includes("ちんぽ")) {
@@ -220,24 +199,23 @@ client.on(Events.MessageCreate, async message => {
     await playInUserVoiceChannel(message, "air_purifer_H.wav", "めっちゃ換気するか");
     return;
   }
-
-  // 他の条件分岐があればこの下に追加
 });
 
 // 7. 最後にログイン
-client.login(token);
-
+client.login(token).catch(err => {
+  console.error("Discord ログインに失敗しました:", err);
+});
 
 // ===============================
 // Render Free 裏技：ダミーHTTPサーバー
 // ===============================
-const http = require("http");
-
 const PORT = process.env.PORT || 3000;
 
-http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("bot is alive");
-}).listen(PORT, () => {
-  console.log(`Render keep-alive server running on port ${PORT}`);
-});
+http
+  .createServer((req, res) => {
+    res.writeHead(200, { "Content-Type": "text/plain" });
+    res.end("bot is alive");
+  })
+  .listen(PORT, () => {
+    console.log(`Render keep-alive server running on port ${PORT}`);
+  });
