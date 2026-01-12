@@ -50,12 +50,11 @@ const group10 = ["琴葉葵", "琴葉茜", "結月ゆかり", "紲星あかり",
 const CHARACTER_LIST_TEXT = `
 【好きなキャラクター確率一覧】
 
-■ 60% 枠（高確率）
+■ 40% 枠
 ・東北きりたん
 ・音街ウナ
-※ 各30%
 
-■ 30% 枠（中確率）
+■ 30% 枠
 ・阿澄しゅお
 ・鳴花ヒメ
 ・鳴花ミコト
@@ -70,9 +69,8 @@ const CHARACTER_LIST_TEXT = `
 ・つくよみちゃん
 ・ディアちゃん
 ・櫻歌ミコ
-※ 各 約2.14%
 
-■ 10% 枠（低確率・レア）
+■ 30% 枠
 ・琴葉葵
 ・琴葉茜
 ・結月ゆかり
@@ -114,7 +112,6 @@ const CHARACTER_LIST_TEXT = `
 ・青山龍星
 ・クロワちゃん
 ・宮舞モカ
-※ 各 約0.23%
 `;
 
 
@@ -125,12 +122,12 @@ function pickRandom(arr) {
 function pickCharacter60_30_10() {
   const r = Math.random(); // 0.0〜1.0
 
-  if (r < 0.6) {
-    return pickRandom(group60); // 60%
-  } else if (r < 0.9) {
-    return pickRandom(group30); // 次の30%
+  if (r < 0.4) {
+    return pickRandom(group60); // 高確率
+  } else if (r < 0.3) {
+    return pickRandom(group30); // 中確率
   } else {
-    return pickRandom(group10); // 残り10%
+    return pickRandom(group10); // 低確率
   }
 }
 
