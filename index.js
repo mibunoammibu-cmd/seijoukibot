@@ -41,6 +41,21 @@ function randomWeightedItem(items) {
   return items[items.length - 1];
 }
 
+const group90 = ["A", "B", "C"];           // 70%枠（均等）
+const group10 = ["D", "E", "F", "G"];      // 30%枠（均等）
+
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function pickCharacter90_10() {
+  // 0〜1未満の乱数。0.7未満なら70%枠
+  if (Math.random() < 0.9) {
+    return pickRandom(group90);
+  }
+  return pickRandom(group10);
+}
+
 // VCに入って音を流して抜ける共通関数
 async function playInUserVoiceChannel(message, fileName, replyText) {
   const voiceChannel = message.member?.voice?.channel;
@@ -140,6 +155,8 @@ client.on(Events.MessageCreate, async message => {
       "・ちんぽ（含む） → ナイスちんぽ",
       "・!おみくじ → 凶か大凶が出る",
       "",
+      "【botにリプライ】",
+      "今日誰で抜く？ → ランダムでボイロ（広義）キャラクター",
       "短時間に大量のコマンド送信を受けると一時停止します",
     ].join("\n");
 
@@ -199,6 +216,13 @@ client.on(Events.MessageCreate, async message => {
     await playInUserVoiceChannel(message, "air_purifer_H.wav", "めっちゃ換気するか");
     return;
   }
+
+  if (message.content.includes("今日誰で抜く？")) {
+  const name = pickCharacter90_10();
+  await message.reply(name);
+  return;
+}
+
 });
 
 // 7. 最後にログイン
