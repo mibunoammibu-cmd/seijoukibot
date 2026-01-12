@@ -234,6 +234,7 @@ client.on(Events.MessageCreate, async message => {
       "",
       "【botにリプライ】",
       "今日誰で抜く？ → ランダムでボイロ（広義）キャラクター",
+      "10連今日誰で抜く？ → ランダムでボイロ（広義）キャラクターを10キャラ",
       "",
       "短時間に大量のコマンド送信を受けると一時停止します",
     ].join("\n");
@@ -301,6 +302,22 @@ client.on(Events.MessageCreate, async message => {
     await playInUserVoiceChannel(message, "air_purifer_H.wav", "めっちゃ換気するか");
     return;
   }
+
+// 10連（優先的に判定）
+if (message.content.includes("10連今日誰で抜く？")) {
+  const results = [];
+
+  for (let i = 0; i < 10; i++) {
+    results.push(pickCharacter60_30_10());
+  }
+
+  const replyText =
+    "今日誰で抜く？ 10連結果\n\n" +
+    results.map((name, i) => `${i + 1}. ${name}`).join("\n");
+
+  await message.reply("```" + replyText + "```");
+  return;
+}
 
 if (message.content.includes("今日誰で抜く？")) {
   const name = pickCharacter60_30_10();
