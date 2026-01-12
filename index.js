@@ -127,7 +127,7 @@ function canRespond() {
   }
 
   // 10回以内ならOK
-  if (rateLimitLog.length < 10) {
+  if (rateLimitLog.length < 100) {
     rateLimitLog.push(now);
     return true;
   }
