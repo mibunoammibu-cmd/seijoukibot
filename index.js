@@ -41,20 +41,28 @@ function randomWeightedItem(items) {
   return items[items.length - 1];
 }
 
-const group90 = ["A", "B", "C"];           // 70%枠（均等）
-const group10 = ["D", "E", "F", "G"];      // 30%枠（均等）
+const group60 = ["東北きりたん", "音街ウナ"];           
+const group30 = ["阿澄しゅお", "鳴花ヒメ", "鳴花ミコト", "大江戸ちゃんこ","中国うさぎ","小夜","アル・ビィ","月読アイ","ついなちゃん","ずんだもん","リリンちゃん","つくよみちゃん","ディアちゃん"];      // 30%枠（均等）
+const group10 = ["琴葉葵", "琴葉茜", "結月ゆかり", "紲星あかり","東北ずん子","東北イタコ","弦巻マキ","ONE","WhiteCUL","阿澄りりせ","足立レイ","雨晴はう","アリアル","伊織弓鶴",
+                "重音テト","アルマちゃん","風見壮一","春日部つむぎ","九州そら","京町セイカ","小春六花","さとうささら","四国めたん","白上虎太郎","すずきつづみ","タカハシ","夏色花梨","桜乃そら",
+                "フィーちゃん","フリモメン","松樺りすく","ミリアル","冥鳴ひまり","夜語トバリ"];      // 10%枠（均等）
 
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function pickCharacter90_10() {
-  // 0〜1未満の乱数。0.7未満なら70%枠
-  if (Math.random() < 0.9) {
-    return pickRandom(group90);
+function pickCharacter60_30_10() {
+  const r = Math.random(); // 0.0〜1.0
+
+  if (r < 0.6) {
+    return pickRandom(group60); // 60%
+  } else if (r < 0.9) {
+    return pickRandom(group30); // 次の30%
+  } else {
+    return pickRandom(group10); // 残り10%
   }
-  return pickRandom(group10);
 }
+
 
 // VCに入って音を流して抜ける共通関数
 async function playInUserVoiceChannel(message, fileName, replyText) {
@@ -190,8 +198,9 @@ client.on(Events.MessageCreate, async message => {
   // おみくじコマンド
   if (message.content === "!おみくじ") {
     const omikuji = [
-      { text: "凶", weight: 98 },
-      { text: "大凶", weight: 2 },
+      { text: "凶", weight: 90 },
+      { text: "大凶", weight: 9 },
+      { text: "超凶", weight: 1 },
     ];
 
     const choice = randomWeightedItem(omikuji);
@@ -217,11 +226,12 @@ client.on(Events.MessageCreate, async message => {
     return;
   }
 
-  if (message.content.includes("今日誰で抜く？")) {
-  const name = pickCharacter90_10();
+if (message.content.includes("今日誰で抜く？")) {
+  const name = pickCharacter60_30_10();
   await message.reply(name);
   return;
 }
+
 
 });
 
