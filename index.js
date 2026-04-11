@@ -1,23 +1,23 @@
 // index.js
 
-// 1. .env 読み込み
 require("dotenv").config();
 
 const path = require("path");
+const http = require("http");
+const { Client, GatewayIntentBits, Events } = require("discord.js");
 const {
   joinVoiceChannel,
   createAudioPlayer,
   createAudioResource,
   AudioPlayerStatus,
 } = require("@discordjs/voice");
-const { Client, GatewayIntentBits, Events } = require("discord.js");
-const http = require("http");
 
-// 2. トークン取得
+// =======================
+// 基本設定
+// =======================
 const token = process.env.DISCORD_TOKEN;
 console.log("DISCORD_TOKEN 存在チェック:", token ? "OK" : "NG");
 
-// 3. Client 作成
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -57,9 +57,6 @@ const pokeReplies = [
   "ポンズ",
 ];
 
-// =======================
-// 語尾
-// =======================
 const suffixList = [
   "、な？🙋‍♂️ 😅",
   "、な？😅",
@@ -71,20 +68,9 @@ function pickSuffix() {
   return suffixList[Math.floor(Math.random() * suffixList.length)];
 }
 
-// 重み付きランダム
-function randomWeightedItem(items) {
-  const total = items.reduce((sum, item) => sum + item.weight, 0);
-  let r = Math.random() * total;
-
-  for (const item of items) {
-    if (r < item.weight) {
-      return item;
-    }
-    r -= item.weight;
-  }
-  return items[items.length - 1];
-}
-
+// =======================
+// ガチャ関連
+// =======================
 const groupA = ["東北きりたん", "音街ウナ"];
 const groupB = [
   "彩澄しゅお",
@@ -213,8 +199,22 @@ const CHARACTER_LIST_TEXT = `
 ・宮舞モカ
 `;
 
+// =======================
+// 汎用関数
+// =======================
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function randomWeightedItem(items) {
+  const total = items.reduce((sum, item) => sum + item.weight, 0);
+  let r = Math.random() * total;
+
+  for (const item of items) {
+    if (r < item.weight) return item;
+    r -= item.weight;
+  }
+  return items[items.length - 1];
 }
 
 function pickCharacter60_30_10() {
@@ -229,7 +229,9 @@ function pickCharacter60_30_10() {
   }
 }
 
-// VCに入って音を流して抜ける共通関数
+// =======================
+// VC再生
+// =======================
 async function playInUserVoiceChannel(message, fileName, replyText) {
   const voiceChannel = message.member?.voice?.channel;
   if (!voiceChannel) {
@@ -276,9 +278,9 @@ async function playInUserVoiceChannel(message, fileName, replyText) {
   }
 }
 
-// -------------------------
-//  レート制限（1分で100回まで）
-// -------------------------
+// =======================
+// レート制限
+// =======================
 const rateLimitLog = [];
 
 function canRespond() {
@@ -297,22 +299,21 @@ function canRespond() {
   return false;
 }
 
-// 5. ログイン完了時
+// =======================
+// 起動ログ
+// =======================
 client.once(Events.ClientReady, readyClient => {
   console.log(`ログイン完了: ${readyClient.user.tag}`);
 });
 
-// 6. メッセージハンドラ
+// =======================
+// メッセージ処理
+// =======================
 client.on(Events.MessageCreate, async message => {
   if (message.author.bot) return;
+  if (!canRespond()) return;
 
-  if (!canRespond()) {
-    return;
-  }
-
-  // =======================
   // ポケモンチャンピオンズ崩壊
-  // =======================
   if (
     message.content.includes("ポケットモンスターチャンピオンズ") ||
     message.content.includes("ポケモンチャンピオンズ")
@@ -322,7 +323,7 @@ client.on(Events.MessageCreate, async message => {
     return;
   }
 
-  // 崩壊ワード一覧
+  // 崩壊一覧
   if (message.content === "!チャンピオンズ一覧") {
     const text =
       "【ポケモンチャンピオンズ崩壊一覧】\n\n" +
@@ -332,7 +333,7 @@ client.on(Events.MessageCreate, async message => {
     return;
   }
 
-  // コマンドリスト（!help）
+  // help
   if (message.content === "!help") {
     const helpMessage = [
       "空気清浄機くんbot コマンドリスト",
@@ -345,7 +346,7 @@ client.on(Events.MessageCreate, async message => {
       "【テキスト反応】",
       "ちんぽ（含む） → ナイスちんぽ",
       "!おみくじ → 凶か大凶か超凶が出る",
-      "!ガチャ確率 → ↓の確率分布を表示",
+      "!ガチャ確率 → 確率分布を表示",
       "!チャンピオンズ一覧 → 崩壊候補一覧を表示",
       "ポケットモンスターチャンピオンズ / ポケモンチャンピオンズ → 崩壊返信",
       "",
@@ -377,7 +378,7 @@ client.on(Events.MessageCreate, async message => {
     return;
   }
 
-  // 「ちんぽ」が含まれていたら重み付きランダム返信
+  // ちんぽ返信
   if (message.content.includes("ちんぽ")) {
     const helloReplies = [
       { text: "ナイスちんぽ", weight: 98 },
@@ -389,7 +390,7 @@ client.on(Events.MessageCreate, async message => {
     return;
   }
 
-  // おみくじコマンド
+  // おみくじ
   if (message.content === "!おみくじ") {
     const omikuji = [
       { text: "凶", weight: 90 },
@@ -402,25 +403,23 @@ client.on(Events.MessageCreate, async message => {
     return;
   }
 
-  // 1つ目: 空気悪くね？
+  // VCコマンド
   if (message.content === "空気悪くね？") {
     await playInUserVoiceChannel(message, "air_purifer_M.wav", "換気するか");
     return;
   }
 
-  // 2つ目: ちょっと空気悪くね？
   if (message.content === "ちょっと空気悪くね？") {
     await playInUserVoiceChannel(message, "air_purifer_L.wav", "ちょっと換気するか");
     return;
   }
 
-  // 3つ目: めっちゃ空気悪くね？
   if (message.content === "めっちゃ空気悪くね？") {
     await playInUserVoiceChannel(message, "air_purifer_H.wav", "めっちゃ換気するか");
     return;
   }
 
-  // 10連（優先的に判定）
+  // 10連
   if (message.content.includes("10連今日誰で抜く？")) {
     const results = [];
 
@@ -444,14 +443,16 @@ client.on(Events.MessageCreate, async message => {
   }
 });
 
-// 7. 最後にログイン
+// =======================
+// ログイン
+// =======================
 client.login(token).catch(err => {
   console.error("Discord ログインに失敗しました:", err);
 });
 
-// ===============================
+// =======================
 // HTTPサーバー
-// ===============================
+// =======================
 const PORT = process.env.PORT || 3000;
 
 http
