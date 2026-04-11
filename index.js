@@ -27,6 +27,30 @@ const client = new Client({
   ],
 });
 
+// =======================
+// ポケモン崩壊ワード
+// =======================
+const pokeReplies = [
+  "ケモチャンズ","モンチャンズ","ンチャンズ","チャンズ","ャンズ","ンズ",
+  "ケチャンピン","モチャンピン","ンチャンピン","チャンピン","ャンピン",
+  "ケモンチャン","モンチャン","ンチャン","ケモンズ","モンズ","ンンズ",
+  "ケチャン","モチャン","ンチャンズズ","ポャズ","ンンンズ","ヌーン","ポンズ"
+];
+
+// =======================
+// 語尾
+// =======================
+const suffixList = [
+  "、な？🙋‍♂️ 😅",
+  "、な？😅",
+  "、な？🙋‍♂️",
+  "、な？"
+];
+
+function pickSuffix() {
+  return suffixList[Math.floor(Math.random() * suffixList.length)];
+}
+
 // 重み付きランダム
 function randomWeightedItem(items) {
   const total = items.reduce((sum, item) => sum + item.weight, 0);
@@ -178,6 +202,30 @@ async function playInUserVoiceChannel(message, fileName, replyText) {
   if (replyText) {
     await message.reply(replyText);
   }
+}
+
+// =======================
+// ポケモンチャンピオンズ崩壊
+// =======================
+if (
+  message.content.includes("ポケットモンスターチャンピオンズ") ||
+  message.content.includes("ポケモンチャンピオンズ")
+) {
+  const reply = pickRandom(pokeReplies) + pickSuffix();
+  await message.reply(reply);
+  return;
+}
+
+// =======================
+// 崩壊ワード一覧
+// =======================
+if (message.content === "!チャンピオンズ一覧") {
+  const text =
+    "【ポケモンチャンピオンズ崩壊一覧】\n\n" +
+    pokeReplies.map(name => "・" + name).join("\n");
+
+  await message.reply("```" + text + "```");
+  return;
 }
 
 // -------------------------
