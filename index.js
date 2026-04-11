@@ -31,10 +31,30 @@ const client = new Client({
 // ポケモン崩壊ワード
 // =======================
 const pokeReplies = [
-  "ケモチャンズ","モンチャンズ","ンチャンズ","チャンズ","ャンズ","ンズ",
-  "ケチャンピン","モチャンピン","ンチャンピン","チャンピン","ャンピン",
-  "ケモンチャン","モンチャン","ンチャン","ケモンズ","モンズ","ンンズ",
-  "ケチャン","モチャン","ンチャンズズ","ポャズ","ンンンズ","ヌーン","ポンズ"
+  "ケモチャンズ",
+  "モンチャンズ",
+  "ンチャンズ",
+  "チャンズ",
+  "ャンズ",
+  "ンズ",
+  "ケチャンピン",
+  "モチャンピン",
+  "ンチャンピン",
+  "チャンピン",
+  "ャンピン",
+  "ケモンチャン",
+  "モンチャン",
+  "ンチャン",
+  "ケモンズ",
+  "モンズ",
+  "ンンズ",
+  "ケチャン",
+  "モチャン",
+  "ンチャンズズ",
+  "ポャズ",
+  "ンンンズ",
+  "ヌーン",
+  "ポンズ",
 ];
 
 // =======================
@@ -44,7 +64,7 @@ const suffixList = [
   "、な？🙋‍♂️ 😅",
   "、な？😅",
   "、な？🙋‍♂️",
-  "、な？"
+  "、な？",
 ];
 
 function pickSuffix() {
@@ -65,11 +85,66 @@ function randomWeightedItem(items) {
   return items[items.length - 1];
 }
 
-const groupA = ["東北きりたん", "音街ウナ"];           
-const groupB = ["彩澄しゅお", "鳴花ヒメ", "鳴花ミコト", "大江戸ちゃんこ","中国うさぎ","小夜","アル・ビィ","月読アイ","ついなちゃん","ずんだもん","リリンちゃん","つくよみちゃん","ディアちゃん","櫻歌ミコ"];      // 30%枠（均等）
-const groupC = ["琴葉葵", "琴葉茜", "結月ゆかり", "紲星あかり","東北ずん子","東北イタコ","弦巻マキ","ONE","WhiteCUL","彩澄りりせ","足立レイ","雨晴はう","アリアル","伊織弓鶴",
-                "重音テト","アルマちゃん","風見壮一","春日部つむぎ","九州そら","京町セイカ","小春六花","さとうささら","四国めたん","白上虎太郎","すずきつづみ","タカハシ","夏色花梨","桜乃そら",
-                "フィーちゃん","フリモメン","松樺りすく","ミリアル","冥鳴ひまり","夜語トバリ","花隈千冬","双葉湊音","紡乃世詞音","ナースロボ＿タイプＴ","青山龍星","クロワちゃん","宮舞モカ"];      // 10%枠（均等）
+const groupA = ["東北きりたん", "音街ウナ"];
+const groupB = [
+  "彩澄しゅお",
+  "鳴花ヒメ",
+  "鳴花ミコト",
+  "大江戸ちゃんこ",
+  "中国うさぎ",
+  "小夜",
+  "アル・ビィ",
+  "月読アイ",
+  "ついなちゃん",
+  "ずんだもん",
+  "リリンちゃん",
+  "つくよみちゃん",
+  "ディアちゃん",
+  "櫻歌ミコ",
+];
+const groupC = [
+  "琴葉葵",
+  "琴葉茜",
+  "結月ゆかり",
+  "紲星あかり",
+  "東北ずん子",
+  "東北イタコ",
+  "弦巻マキ",
+  "ONE",
+  "WhiteCUL",
+  "彩澄りりせ",
+  "足立レイ",
+  "雨晴はう",
+  "アリアル",
+  "伊織弓鶴",
+  "重音テト",
+  "アルマちゃん",
+  "風見壮一",
+  "春日部つむぎ",
+  "九州そら",
+  "京町セイカ",
+  "小春六花",
+  "さとうささら",
+  "四国めたん",
+  "白上虎太郎",
+  "すずきつづみ",
+  "タカハシ",
+  "夏色花梨",
+  "桜乃そら",
+  "フィーちゃん",
+  "フリモメン",
+  "松樺りすく",
+  "ミリアル",
+  "冥鳴ひまり",
+  "夜語トバリ",
+  "花隈千冬",
+  "双葉湊音",
+  "紡乃世詞音",
+  "ナースロボ＿タイプＴ",
+  "青山龍星",
+  "クロワちゃん",
+  "宮舞モカ",
+];
 
 const CHARACTER_LIST_TEXT = `
 【好きなキャラクター確率一覧】
@@ -138,23 +213,21 @@ const CHARACTER_LIST_TEXT = `
 ・宮舞モカ
 `;
 
-
 function pickRandom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function pickCharacter60_30_10() {
-  const r = Math.random(); // 0.0〜1.0
+  const r = Math.random();
 
   if (r < 0.4) {
-    return pickRandom(groupA); // 高確率
+    return pickRandom(groupA);
   } else if (r < 0.7) {
-    return pickRandom(groupB); // 中確率
+    return pickRandom(groupB);
   } else {
-    return pickRandom(groupC); // 低確率
+    return pickRandom(groupC);
   }
 }
-
 
 // VCに入って音を流して抜ける共通関数
 async function playInUserVoiceChannel(message, fileName, replyText) {
@@ -194,7 +267,6 @@ async function playInUserVoiceChannel(message, fileName, replyText) {
     inlineVolume: true,
   });
 
-  // 音量を 10% に設定
   resource.volume.setVolume(0.1);
   connection.subscribe(player);
   player.play(resource);
@@ -204,45 +276,19 @@ async function playInUserVoiceChannel(message, fileName, replyText) {
   }
 }
 
-// =======================
-// ポケモンチャンピオンズ崩壊
-// =======================
-if (
-  message.content.includes("ポケットモンスターチャンピオンズ") ||
-  message.content.includes("ポケモンチャンピオンズ")
-) {
-  const reply = pickRandom(pokeReplies) + pickSuffix();
-  await message.reply(reply);
-  return;
-}
-
-// =======================
-// 崩壊ワード一覧
-// =======================
-if (message.content === "!チャンピオンズ一覧") {
-  const text =
-    "【ポケモンチャンピオンズ崩壊一覧】\n\n" +
-    pokeReplies.map(name => "・" + name).join("\n");
-
-  await message.reply("```" + text + "```");
-  return;
-}
-
 // -------------------------
-//  レート制限（1分で10回まで）
+//  レート制限（1分で100回まで）
 // -------------------------
-const rateLimitLog = []; // 反応したタイムスタンプを保存
+const rateLimitLog = [];
 
 function canRespond() {
   const now = Date.now();
-
-  // 1分以内のログだけ残す
   const oneMinuteAgo = now - 60 * 1000;
+
   while (rateLimitLog.length && rateLimitLog[0] < oneMinuteAgo) {
     rateLimitLog.shift();
   }
 
-  // 10回以内ならOK
   if (rateLimitLog.length < 100) {
     rateLimitLog.push(now);
     return true;
@@ -260,8 +306,29 @@ client.once(Events.ClientReady, readyClient => {
 client.on(Events.MessageCreate, async message => {
   if (message.author.bot) return;
 
-  // レート制限チェック（1分で10回まで）
   if (!canRespond()) {
+    return;
+  }
+
+  // =======================
+  // ポケモンチャンピオンズ崩壊
+  // =======================
+  if (
+    message.content.includes("ポケットモンスターチャンピオンズ") ||
+    message.content.includes("ポケモンチャンピオンズ")
+  ) {
+    const reply = pickRandom(pokeReplies) + pickSuffix();
+    await message.reply(reply);
+    return;
+  }
+
+  // 崩壊ワード一覧
+  if (message.content === "!チャンピオンズ一覧") {
+    const text =
+      "【ポケモンチャンピオンズ崩壊一覧】\n\n" +
+      pokeReplies.map(name => "・" + name).join("\n");
+
+    await message.reply("```" + text + "```");
     return;
   }
 
@@ -279,6 +346,8 @@ client.on(Events.MessageCreate, async message => {
       "ちんぽ（含む） → ナイスちんぽ",
       "!おみくじ → 凶か大凶か超凶が出る",
       "!ガチャ確率 → ↓の確率分布を表示",
+      "!チャンピオンズ一覧 → 崩壊候補一覧を表示",
+      "ポケットモンスターチャンピオンズ / ポケモンチャンピオンズ → 崩壊返信",
       "",
       "【botにリプライ】",
       "今日誰で抜く？ → ランダムでボイロ（広義）キャラクター",
@@ -293,9 +362,9 @@ client.on(Events.MessageCreate, async message => {
 
   // ガチャ確率一覧
   if (message.content === "!ガチャ確率") {
-  await message.reply("```" + CHARACTER_LIST_TEXT + "```");
-}
-
+    await message.reply("```" + CHARACTER_LIST_TEXT + "```");
+    return;
+  }
 
   // スタンプリアクション
   if (
@@ -351,29 +420,28 @@ client.on(Events.MessageCreate, async message => {
     return;
   }
 
-// 10連（優先的に判定）
-if (message.content.includes("10連今日誰で抜く？")) {
-  const results = [];
+  // 10連（優先的に判定）
+  if (message.content.includes("10連今日誰で抜く？")) {
+    const results = [];
 
-  for (let i = 0; i < 10; i++) {
-    results.push(pickCharacter60_30_10());
+    for (let i = 0; i < 10; i++) {
+      results.push(pickCharacter60_30_10());
+    }
+
+    const replyText =
+      "今日誰で抜く？ 10連結果\n\n" +
+      results.map((name, i) => `${i + 1}. ${name}`).join("\n");
+
+    await message.reply("```" + replyText + "```");
+    return;
   }
 
-  const replyText =
-    "今日誰で抜く？ 10連結果\n\n" +
-    results.map((name, i) => `${i + 1}. ${name}`).join("\n");
-
-  await message.reply("```" + replyText + "```");
-  return;
-}
-
-if (message.content.includes("今日誰で抜く？")) {
-  const name = pickCharacter60_30_10();
-  await message.reply(name);
-  return;
-}
-
-
+  // 1連
+  if (message.content.includes("今日誰で抜く？")) {
+    const name = pickCharacter60_30_10();
+    await message.reply(name);
+    return;
+  }
 });
 
 // 7. 最後にログイン
@@ -382,7 +450,7 @@ client.login(token).catch(err => {
 });
 
 // ===============================
-// Render Free 裏技：ダミーHTTPサーバー
+// HTTPサーバー
 // ===============================
 const PORT = process.env.PORT || 3000;
 
@@ -394,5 +462,3 @@ http
   .listen(PORT, () => {
     console.log(`Render keep-alive server running on port ${PORT}`);
   });
-
-  
