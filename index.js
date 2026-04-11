@@ -58,9 +58,8 @@ const pokeReplies = [
 ];
 
 const suffixList = [
-  "、な？🙋‍♂️ 😅",
-  "、な？😅",
-  "、な？🙋‍♂️",
+  "、な？:raised_hand::sweat_smile:",
+  "、な？:sweat_smile:",
   "、な？",
 ];
 
