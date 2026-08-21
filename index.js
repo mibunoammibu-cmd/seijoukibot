@@ -869,6 +869,28 @@ client.on(
   }
 );
 
+if (message.content === "!ニコテスト") {
+  const channel = await client.channels.fetch(NICO_NOTIFY_CHANNEL_ID);
+
+  await channel.send(
+    "https://www.nicovideo.jp/watch/sm9"
+  );
+
+  await message.reply("ニコニコ通知テスト完了");
+  return;
+}
+
+if (message.content === "!ニコ新着テスト") {
+  for (const userId of NICO_USER_IDS) {
+    latestNicoVideos.set(userId, "TEST_VIDEO_ID");
+  }
+
+  await checkNicoNewVideos();
+
+  await message.reply("新着判定テストを実行しました");
+  return;
+}
+
 // =======================
 // Discordログイン
 // =======================
