@@ -32,7 +32,7 @@ const client = new Client({
 // =======================
 
 // 通知を送るDiscordチャンネルID
-const NICO_NOTIFY_CHANNEL_ID = "485127725888045059";
+const NICO_NOTIFY_CHANNEL_ID = "1540305790836019210";
 
 // 監視するニコニコ投稿者ID
 const NICO_USER_IDS = [
