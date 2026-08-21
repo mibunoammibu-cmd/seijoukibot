@@ -866,30 +866,83 @@ client.on(
 
       return;
     }
+        // =======================
+    // ニコニコ通知テスト
+    // =======================
+    if (message.content === "!ニコテスト") {
+      try {
+        const channel =
+          await client.channels.fetch(
+            NICO_NOTIFY_CHANNEL_ID
+          );
+
+        if (!channel || !channel.isTextBased()) {
+          await message.reply(
+            "通知先チャンネルを取得できませんでした"
+          );
+          return;
+        }
+
+        await channel.send(
+          "https://www.nicovideo.jp/watch/sm9"
+        );
+
+        await message.reply(
+          "ニコニコ通知テスト完了"
+        );
+      } catch (error) {
+        console.error(
+          "ニコテスト失敗:",
+          error
+        );
+
+        await message.reply(
+          "ニコニコ通知テストに失敗しました"
+        );
+      }
+
+      return;
+    }
+
+    // =======================
+    // ニコニコ新着判定テスト
+    // =======================
+    if (
+      message.content ===
+      "!ニコ新着テスト"
+    ) {
+      try {
+        for (
+          const userId of NICO_USER_IDS
+        ) {
+          latestNicoVideos.set(
+            userId,
+            "TEST_VIDEO_ID"
+          );
+        }
+
+        await checkNicoNewVideos();
+
+        await message.reply(
+          "新着判定テストを実行しました"
+        );
+      } catch (error) {
+        console.error(
+          "ニコ新着テスト失敗:",
+          error
+        );
+
+        await message.reply(
+          "新着判定テストに失敗しました"
+        );
+      }
+
+      return;
+    }
   }
 );
 
-if (message.content === "!ニコテスト") {
-  const channel = await client.channels.fetch(NICO_NOTIFY_CHANNEL_ID);
 
-  await channel.send(
-    "https://www.nicovideo.jp/watch/sm9"
-  );
-
-  await message.reply("ニコニコ通知テスト完了");
-  return;
-}
-
-if (message.content === "!ニコ新着テスト") {
-  for (const userId of NICO_USER_IDS) {
-    latestNicoVideos.set(userId, "TEST_VIDEO_ID");
-  }
-
-  await checkNicoNewVideos();
-
-  await message.reply("新着判定テストを実行しました");
-  return;
-}
 
 // =======================
 // Discordログイン
