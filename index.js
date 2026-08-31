@@ -297,7 +297,6 @@ async function getLatestNicoVideo(userId) {
   }
 
   const json = await response.json();
-
   const item = json?.data?.items?.[0];
 
   if (!item) {
@@ -310,7 +309,19 @@ async function getLatestNicoVideo(userId) {
     item?.id ||
     item?.contentId;
 
-  return videoId || null;
+  const registeredAt =
+    item?.essential?.registeredAt ||
+    item?.video?.registeredAt ||
+    item?.registeredAt;
+
+  if (!videoId || !registeredAt) {
+    return null;
+  }
+
+  return {
+    id: videoId,
+    registeredAt: new Date(registeredAt).getTime(),
+  };
 }
 
 // =======================
@@ -322,87 +333,70 @@ async function checkNicoNewVideos() {
   try {
     channel = await client.channels.fetch(NICO_NOTIFY_CHANNEL_ID);
   } catch (error) {
-    console.error(
-      "ニコニコ通知先チャンネル取得失敗:",
-      error
-    );
+    console.error("ニコニコ通知先チャンネル取得失敗:", error);
     return;
   }
 
   if (!channel || !channel.isTextBased()) {
-    console.error(
-      "ニコニコ通知先がテキストチャンネルではありません"
-    );
+    console.error("ニコニコ通知先がテキストチャンネルではありません");
     return;
   }
 
   for (const userId of NICO_USER_IDS) {
-
-    if (
-      !userId ||
-      userId === "ここに投稿者ID"
-    ) {
+    if (!userId || userId === "ここに投稿者ID") {
       continue;
     }
 
     try {
-      const videoId =
-        await getLatestNicoVideo(userId);
+      const video = await getLatestNicoVideo(userId);
 
-      if (!videoId) {
-        console.log(
-          `ニコニコ動画なし user=${userId}`
-        );
+      if (!video) {
+        console.log(`ニコニコ動画なし user=${userId}`);
         continue;
       }
 
-      const previousVideoId =
-        latestNicoVideos.get(userId);
+      const previous = latestNicoVideos.get(userId);
 
-      // ==========================
       // 起動直後
-      // ==========================
-      // 現在の最新動画を記録するだけ。
-      // Discordには送らない。
-      if (!previousVideoId) {
-
-        latestNicoVideos.set(
-          userId,
-          videoId
-        );
+      if (!previous) {
+        latestNicoVideos.set(userId, video);
 
         console.log(
-          `ニコニコ初期登録 user=${userId} video=${videoId}`
+          `ニコニコ初期登録 user=${userId} video=${video.id}`
         );
 
         continue;
       }
 
-      // 前回と同じなら何もしない
-      if (previousVideoId === videoId) {
+      // 同じ動画
+      if (previous.id === video.id) {
         continue;
       }
 
-      // ==========================
-      // 新着発見
-      // ==========================
-      latestNicoVideos.set(
-        userId,
-        videoId
-      );
+      // ★重要
+      // 前回より古い動画が最新として返ってきた場合は無視
+      if (video.registeredAt <= previous.registeredAt) {
+        console.log(
+          `ニコニコ旧動画を無視 user=${userId} ` +
+          `video=${video.id} previous=${previous.id}`
+        );
+
+        continue;
+      }
+
+      // 本当に新しい動画
+      latestNicoVideos.set(userId, video);
 
       const videoUrl =
-        `https://www.nicovideo.jp/watch/${videoId}`;
+        `https://www.nicovideo.jp/watch/${video.id}`;
 
-      // DiscordにはURLだけ送る
       await channel.send(videoUrl);
 
       console.log(
-        `ニコニコ新着通知 user=${userId} video=${videoId}`
+        `ニコニコ新着通知 user=${userId} video=${video.id}`
       );
 
     } catch (error) {
-
       console.error(
         `ニコニコ監視エラー user=${userId}:`,
         error
